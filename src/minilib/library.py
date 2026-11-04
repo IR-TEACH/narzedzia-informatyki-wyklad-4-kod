@@ -36,3 +36,12 @@ class Library:
             raise LoanError(f"Limit wypożyczeń: {member.max_loans}")
         book.copies -= 1
         loans.append(isbn)
+
+    def return_book(self, member: Member, isbn: str) -> None:
+        book = self.find_by_isbn(isbn)
+        if book is None:
+            raise LoanError(f"Nie ma takiej książki: {isbn}")
+        book.copies += 1
+        loans = self.loans.get(member.email, [])
+        if isbn in loans:
+            loans.remove(isbn)

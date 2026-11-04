@@ -22,3 +22,12 @@ def test_fourth_loan_exceeds_limit(library, anna):
 
     with pytest.raises(LoanError, match="Limit"):
         library.borrow(anna, "978-0-316-03770-9")
+
+
+def test_return_book_restores_copies(library, anna):
+    library.borrow(anna, "978-0-13-235088-4")
+
+    library.return_book(anna, "978-0-13-235088-4")
+
+    assert library.find_by_isbn("978-0-13-235088-4").copies == 3
+    assert library.loans[anna.email] == []

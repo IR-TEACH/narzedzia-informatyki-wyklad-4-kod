@@ -14,6 +14,7 @@ class Library:
     def __init__(self, books: list[Book]) -> None:
         self.books = books
         self.loans: dict[str, list[str]] = {}  # e-mail -> ISBN-y
+        self._by_isbn = {book.isbn.replace("-", ""): book for book in books}
 
     @classmethod
     def from_file(cls, path: str = "data/books.json") -> "Library":
@@ -21,11 +22,7 @@ class Library:
             return cls([Book.from_dict(item) for item in json.load(f)])
 
     def find_by_isbn(self, isbn: str) -> Book | None:
-        wanted = isbn.replace("-", "")
-        for book in self.books:
-            if book.isbn.replace("-", "") == wanted:
-                return book
-        return None
+        return self._by_isbn.get(isbn.replace("-", ""))
 
     def borrow(self, member: Member, isbn: str) -> None:
         book = self.find_by_isbn(isbn)

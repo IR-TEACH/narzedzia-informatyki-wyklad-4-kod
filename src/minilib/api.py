@@ -31,4 +31,6 @@ def borrow(isbn: str, member: Member = Depends(current_member)) -> list[str]:
 
 @app.get("/members/{email}/loans")
 def member_loans(email: str, member: Member = Depends(current_member)) -> list[str]:
+    if email != member.email:
+        raise HTTPException(403, "To nie Twoje wypożyczenia")
     return library.loans.get(email, [])

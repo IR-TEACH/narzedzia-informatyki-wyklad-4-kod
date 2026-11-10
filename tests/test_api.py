@@ -32,3 +32,9 @@ def test_last_copy_is_gone_for_others():
     response = client.post("/loans/978-0-13-475759-9", headers=JAN)
 
     assert response.status_code == 409
+
+
+def test_cannot_read_others_loans():
+    response = client.get("/members/anna.nowak@example.com/loans", headers=JAN)
+
+    assert response.status_code == 403

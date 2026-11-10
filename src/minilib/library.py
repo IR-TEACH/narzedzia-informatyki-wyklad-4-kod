@@ -41,7 +41,8 @@ class Library:
         book = self.find_by_isbn(isbn)
         if book is None:
             raise LoanError(f"Nie ma takiej książki: {isbn}")
-        book.copies += 1
         loans = self.loans.get(member.email, [])
-        if isbn in loans:
-            loans.remove(isbn)
+        if isbn not in loans:
+            raise LoanError(f"{member.name} nie wypożycza {isbn}")
+        loans.remove(isbn)
+        book.copies += 1

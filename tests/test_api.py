@@ -1,10 +1,17 @@
+import pytest
 from fastapi.testclient import TestClient
 
-from minilib.api import app
+from minilib import api
+from minilib.library import Library
 
-client = TestClient(app)
+client = TestClient(api.app)
 ANNA = {"Authorization": "Bearer token-anna"}
 JAN = {"Authorization": "Bearer token-jan"}
+
+
+@pytest.fixture(autouse=True)
+def fresh_library(monkeypatch):
+    monkeypatch.setattr(api, "library", Library.from_file())
 
 
 def test_get_book():
@@ -29,6 +36,8 @@ def test_borrow_last_copy():
 
 
 def test_last_copy_is_gone_for_others():
+    client.post("/loans/978-0-13-475759-9", headers=ANNA)
+
     response = client.post("/loans/978-0-13-475759-9", headers=JAN)
 
     assert response.status_code == 409
